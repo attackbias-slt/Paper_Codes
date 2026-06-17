@@ -290,11 +290,11 @@ if __name__ == '__main__':
 
      
     # define train dataloader
-    d_label_trn,file_train = genSpoof_list( dir_meta =  '/export/fs05/avantika/XLSR/SLSforASVspoof-2021-DF/stage1_protocol_high_impact_A03A06.txt',is_train=True,is_eval=False)
+    d_label_trn,file_train = genSpoof_list( dir_meta =  'insert training metadata path',is_train=True,is_eval=False)
     
     print('no. of training trials',len(file_train),flush=True)
     
-    train_set=Dataset_ASVspoof2019_train(args,list_IDs = file_train,labels = d_label_trn,base_dir = '/export/fs05/aurosweta/Big_Datasets/ASVspoof_2019/LA/LA/ASVspoof2019_LA_train/flac/',algo=args.algo)
+    train_set=Dataset_ASVspoof2019_train(args,list_IDs = file_train,labels = d_label_trn,base_dir = 'insert path for base directory',algo=args.algo)
     
     train_loader = DataLoader(train_set, batch_size=args.batch_size, num_workers=8, pin_memory=True, persistent_workers=True, prefetch_factor=2, shuffle=True)
     
@@ -303,11 +303,11 @@ if __name__ == '__main__':
 
     #define dev (validation) dataloader
     
-    d_label_dev,file_dev = genSpoof_list( dir_meta =  '/export/fs05/aurosweta/Big_Datasets/ASVspoof_2019/LA/LA/ASVspoof2019_LA_cm_protocols/ASVspoof2019.LA.cm.dev.trl.txt',is_train=False,is_eval=False)
+    d_label_dev,file_dev = genSpoof_list( dir_meta =  'insert dev metadata path',is_train=False,is_eval=False)
     
     print('no. of validation trials',len(file_dev))
     
-    dev_set = Dataset_ASVspoof2019_train(args,list_IDs = file_dev,labels = d_label_dev,base_dir = '/export/fs05/aurosweta/Big_Datasets/ASVspoof_2019/LA/LA/ASVspoof2019_LA_dev/flac/',algo=args.algo)
+    dev_set = Dataset_ASVspoof2019_train(args,list_IDs = file_dev,labels = d_label_dev,base_dir = 'insert path for dev directory',algo=args.algo)
     
     dev_loader = DataLoader(dev_set, batch_size=args.batch_size, num_workers=8, pin_memory=True, persistent_workers=True, prefetch_factor=2, shuffle=False)
     
