@@ -8,6 +8,7 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader
 import torchaudio
 import importlib.util
+from data_utils import Dataset_ASVspoof2019_train
 
 def parse_asvspoof_meta(meta_path):
     """
@@ -96,8 +97,6 @@ class Wrapped_ASVspoof_Dataset(torch.utils.data.Dataset):
         attack_id = self.attack_ids[key]
 
         return wav, label, attack_id
-
-from data_utils import Dataset_ASVspoof2019_train  # your original class
 
 
 Rawnet_2_path = "insert model path"
