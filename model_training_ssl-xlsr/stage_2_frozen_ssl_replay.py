@@ -23,10 +23,7 @@ from model import Model
 from core_scripts.startup_config import set_random_seed
 
 
-# -----------------------------
-# Stage-2 protocol parsing + split (NEW vs REPLAY)
-# -----------------------------
-ATTACK_RE = re.compile(r"A\d{2}")  # matches A01..A99 anywhere in a token
+ATTACK_RE = re.compile(r"A\d{2}")
 
 def parse_stage2_protocol(protocol_path: str):
     """
@@ -44,10 +41,7 @@ def parse_stage2_protocol(protocol_path: str):
                 continue
             toks = line.split()
 
-            # ---- IMPORTANT: minimal assumption (ASVspoof protocols usually have utt_id at toks[1]) ----
             utt_id = toks[1] if len(toks) > 1 else toks[0]
-
-            # label: find spoof/bonafide token anywhere
             label_tok = None
             for t in toks:
                 tl = t.lower()
@@ -110,8 +104,6 @@ def evaluate_accuracy(dev_loader, model, device):
     spoof_total = 0
 
     model.eval()
-
-    # Keep your original weighted CE for reporting (optional).
     weight = torch.FloatTensor([0.1, 0.9]).to(device)
     criterion = nn.CrossEntropyLoss(weight=weight)
 
@@ -285,10 +277,6 @@ def freeze_model(m: nn.Module):
     for p in m.parameters():
         p.requires_grad = False
 
-
-# -----------------------------
-# Main
-# -----------------------------
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Stage-2 Continual Replay Training (Split replay from stage2 protocol)")
 
@@ -390,25 +378,18 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    # Reproducibility
+
     set_random_seed(args.seed, args)
 
-    # Device
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"Device: {device}", flush=True)
 
-    # -----------------------------
-    # Build TEACHER (frozen stage-1 best)
-    # -----------------------------
     teacher = Model(args, device)
     teacher = nn.DataParallel(teacher).to(device)
     teacher.load_state_dict(torch.load(args.stage1_best_ckpt, map_location=device))
     freeze_model(teacher)
     print(f"[Stage2] Teacher loaded and frozen: {args.stage1_best_ckpt}", flush=True)
 
-    # -----------------------------
-    # Build STUDENT
-    # -----------------------------
     student = Model(args, device)
     student = nn.DataParallel(student).to(device)
 
