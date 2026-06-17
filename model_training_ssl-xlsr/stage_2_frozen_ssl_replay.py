@@ -26,13 +26,6 @@ from core_scripts.startup_config import set_random_seed
 ATTACK_RE = re.compile(r"A\d{2}")
 
 def parse_stage2_protocol(protocol_path: str):
-    """
-    Parse stage2 protocol txt and return list of dicts:
-      {utt_id, label(0/1), attack(str or None), raw}
-
-    Minimal assumption: utt_id is token[1] (common ASVspoof format).
-    If your stage2 protocol differs, change utt_id extraction ONLY.
-    """
     entries = []
     with open(protocol_path, "r", encoding="utf-8") as f:
         for line in f:
@@ -49,18 +42,15 @@ def parse_stage2_protocol(protocol_path: str):
                     label_tok = tl
                     break
             if label_tok is None:
-                # fallback: last token numeric 0/1
                 if toks[-1] in ("0", "1"):
                     label_int = int(toks[-1])
                 else:
                     raise ValueError(f"Could not find label (spoof/bonafide or 0/1) in line: {line}")
             else:
                 label_int = 0 if label_tok == "spoof" else 1
-
-            # attack id token (usually present for spoof)
             attack = None
             for t in toks:
-                m = ATTACK_RE.search(t)  # robust: match Axx anywhere in token
+                m = ATTACK_RE.search(t)
                 if m:
                     attack = m.group(0)
                     break
@@ -69,10 +59,6 @@ def parse_stage2_protocol(protocol_path: str):
     return entries
 
 def split_stage2_entries(entries, replay_attacks=None, put_bonafide_in_replay=True):
-    """
-    replay_attacks: set like {"A01","A02","A03","A05","A06"}
-    put_bonafide_in_replay: protect bonafide too (recommended)
-    """
     if replay_attacks is None:
         replay_attacks = {"A01", "A02", "A05", "A06"}
 
@@ -89,7 +75,6 @@ def split_stage2_entries(entries, replay_attacks=None, put_bonafide_in_replay=Tr
 
 
 def logits_to_bon_logit(out2: torch.Tensor) -> torch.Tensor:
-    """Convert 2-logit output [B,2] into a single logit for bonafide vs spoof."""
     return out2[:, 1] - out2[:, 0]  # [B]
 
 
