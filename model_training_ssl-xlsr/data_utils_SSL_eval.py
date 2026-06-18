@@ -79,8 +79,7 @@ class Dataset_ASVspoof2019_train(Dataset):
             self.base_dir = base_dir
             self.algo=algo
             self.args=args
-            self.cut=64600 # take ~4 sec audio (64600 samples)
-
+            self.cut=64600 
 	def __len__(self):
            return len(self.list_IDs)
 
@@ -192,7 +191,7 @@ class Dataset_in_the_wild_eval(Dataset):
 
         self.list_IDs = list_IDs
         self.base_dir = base_dir
-        self.cut = 64600  # take ~4 sec audio (64600 samples)
+        self.cut = 64600  
 
     def __len__(self):
         return len(self.list_IDs)
